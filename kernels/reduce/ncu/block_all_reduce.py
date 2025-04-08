@@ -7,8 +7,6 @@ torch.set_grad_enabled(False)
 # Load the CUDA kernel as a python module
 lib = load(name='block_all_reduce_lib', 
            sources=['block_all_reduce.cu'], 
-           build_directory='./build',
-           verbose=True,
            extra_cuda_cflags=[
                "-O3",
                 "-U__CUDA_NO_HALF_OPERATORS__",
@@ -23,7 +21,7 @@ lib = load(name='block_all_reduce_lib',
 
 
 def run_benchmark(perf_func: callable, values: torch.Tensor, tag: str, 
-                  warmup: int = 10, iters: int = 1000):
+                  warmup: int = 10, iters: int = 10):
     # if perf_func.__name__ == torch.sum.__name__:
     #     values = values.float() # for precision
     for i in range(warmup):
@@ -55,8 +53,8 @@ for (S, K) in SKs:
     print("-" * 80)
     print(" " * 40 + f"S={S}, K={K}")
     values = torch.randn((S, K)).cuda().float()
-    run_benchmark(lib.block_all_reduce_sum_f32_f32,   values, "f32f32")
-    #run_benchmark(lib.block_all_reduce_sum_f32x4_f32, values, "f32x4f32")
+    #run_benchmark(lib.block_all_reduce_sum_f32_f32,   values, "f32f32")
+    run_benchmark(lib.block_all_reduce_sum_f32x4_f32, values, "f32x4f32")
     #run_benchmark(torch.sum,                          values, "f32f32_th")
 
     # print("-" * 80)

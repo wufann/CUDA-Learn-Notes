@@ -9,6 +9,8 @@ torch.set_grad_enabled(False)
 # Load the CUDA kernel as a python module
 lib = load(name='softmax_lib', 
            sources=['softmax.cu'], 
+           build_directory='./build',
+           verbose=True,
            extra_cuda_cflags=[
                "-O3",
                 "-U__CUDA_NO_HALF_OPERATORS__",
